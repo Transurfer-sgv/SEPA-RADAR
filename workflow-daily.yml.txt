@@ -1,0 +1,55 @@
+# 이 파일은 참고용 사본입니다.
+# GitHub 웹사이트에서 [Add file → Create new file]로
+# 파일 이름을  .github/workflows/daily.yml  로 만들고
+# 아래 내용(name: 줄부터 끝까지)을 붙여넣으세요.
+
+name: SEPA RADAR daily scan
+
+on:
+  schedule:
+    - cron: "40 8 * * 1-5"   # 평일 17:40 KST (UTC 08:40)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sepa-radar-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Restore OHLCV cache
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: ohlcv-${{ github.run_id }}
+          restore-keys: |
+            ohlcv-
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run daily scan
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python run_daily.py
+
+      - name: Commit results
+        run: |
+          git config user.name "sepa-radar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/data
+          git diff --cached --quiet || git commit -m "scan: $(date +'%Y-%m-%d')"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

@@ -1,0 +1,28 @@
+{
+  "holdings": ["005930", "196170", "950160", "000660"],
+  "paths": {
+    "docs_data_dir": "docs/data",
+    "cache_dir": "cache/ohlcv"
+  },
+  "screen": {
+    "min_template_pass": 7,
+    "rs_min": 70,
+    "min_close": 1000,
+    "min_trading_value_20d": 300000000,
+    "vol_breakout_ratio": 1.5,
+    "near_pivot_pct": 0.03,
+    "buy_range_pct": 0.05,
+    "vcp": {
+      "lookback": 252,
+      "min_contractions": 2,
+      "max_contractions": 6,
+      "max_first_depth": 0.35,
+      "max_last_depth": 0.12,
+      "shrink_tol": 1.15,
+      "min_base_days": 20,
+      "vdu_max": 0.85
+    }
+  },
+  "chart_export_bars": 300,
+  "telegram": { "enabled": true }
+}
