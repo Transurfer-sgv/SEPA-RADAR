@@ -145,6 +145,7 @@ def run_analysis(panel_map: dict[str, pd.DataFrame], names: dict[str, str],
     min_pass, rs_min = sc.get("min_template_pass", 7), sc.get("rs_min", 70)
     cand = 0
     for t, df in panel_map.items():
+      try:
         rs = rs_map.get(t)
         if rs is None or rs < rs_min or len(df) < 210:
             continue
@@ -169,6 +170,9 @@ def run_analysis(panel_map: dict[str, pd.DataFrame], names: dict[str, str],
                 analyses[t] = {"close": item["close"],
                                "change_pct": (dfi["close"].iloc[-1] / dfi["close"].iloc[-2] - 1) * 100,
                                "stage": stg, "template": tpl, "vcp": v.to_dict(), "_dfi": dfi}
+      except Exception as e:  # noqa: BLE001 — 종목 1개 오류가 전체를 멈추지 않게
+        log(f"[screen] {t} 분석 건너뜀: {e}")
+        continue
     breakout.sort(key=lambda x: -(x["rs"] or 0))
     near.sort(key=lambda x: -(x["dist_to_pivot_pct"] or -99))
     log(f"[screen] 2단계 후보 {cand} → 돌파 {len(breakout)} / 임박 {len(near)}")
