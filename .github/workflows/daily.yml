@@ -1,13 +1,8 @@
-# 이 파일은 참고용 사본입니다.
-# GitHub 웹사이트에서 [Add file → Create new file]로
-# 파일 이름을  .github/workflows/daily.yml  로 만들고
-# 아래 내용(name: 줄부터 끝까지)을 붙여넣으세요.
-
 name: SEPA RADAR daily scan
 
 on:
   schedule:
-    - cron: "40 8 * * 1-5"   # 평일 17:40 KST (UTC 08:40)
+    - cron: "40 8 * * 1-5"   # 평일 17:40 KST
   workflow_dispatch: {}
 
 permissions:
@@ -20,7 +15,12 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 50
+    timeout-minutes: 60
+    env:
+      KRX_ID: ${{ secrets.KRX_ID }}
+      KRX_PW: ${{ secrets.KRX_PW }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -40,9 +40,6 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run daily scan
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python run_daily.py
 
       - name: Commit results
