@@ -191,8 +191,14 @@ def detect_vcp(df: pd.DataFrame, params: dict | None = None) -> VCPResult:
     depths = [c.depth for c in kept]
     final = kept[-1]
     pivot = float(final.hi)
-    base_days = int(n - 1 - kept[0].hi_i)
     last_close = float(close[-1])
+
+    # 방어: 피벗이 0 이하/비정상이면 유효한 베이스가 아님 (0 나눗셈 차단)
+    if not np.isfinite(pivot) or pivot <= 0 or not np.isfinite(last_close):
+        res.status = "NONE"
+        return res
+
+    base_days = int(n - 1 - kept[0].hi_i)
     prev_close = float(close[-2]) if n >= 2 else last_close
     v50 = vol50[-1] if np.isfinite(vol50[-1]) and vol50[-1] > 0 else np.nan
     vol_ratio = float(vol[-1] / v50) if np.isfinite(v50) else None
