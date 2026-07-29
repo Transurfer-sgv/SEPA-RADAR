@@ -1,1 +1,1 @@
-{"breakout":[{"ticker":"120240","name":"대정화금","close":14440.0,"pivot":13840.0,"dist_to_pivot_pct":4.34,"vol_ratio":1.01,"rs":82.5,"passed":7,"footprint":"8%-7%-6%-7%-5% 5T","base_days":28,"status":"BUY_RANGE"}],"near":[]}
+{"breakout":[],"near":[{"ticker":"383220","name":"F&F","close":77600.0,"pivot":79200.0,"dist_to_pivot_pct":-2.02,"vol_ratio":1.41,"rs":86.7,"passed":8,"footprint":"18%-14%-14%-11%-12%-4% 6T","base_days":34,"status":"NEAR"}]}
