@@ -274,8 +274,9 @@ async function renderDetail(box, t, withBack){
     </div>`;
 
   if(withBack) document.getElementById('back').onclick=()=>{S.tab='sig';show();};
-  if(d) drawChart(d);
-  else document.getElementById('chart').outerHTML = '<div class="empty" style="margin:12px">차트 데이터 없음 — 요약만 표시</div>';
+  const chartEl = box.querySelector('#chart');
+  if(d) drawChart(d, chartEl);
+  else if(chartEl) chartEl.outerHTML = '<div class="empty" style="margin:12px">차트 데이터 없음 — 요약만 표시</div>';
 }
 
 function clVal(k,val){
@@ -294,8 +295,8 @@ function clVal(k,val){
 }
 
 /* ── 차트 ── */
-function drawChart(d){
-  const el = document.getElementById('chart'); if(!el||typeof echarts==='undefined') return;
+function drawChart(d, el){
+  el = el || document.getElementById('chart'); if(!el||typeof echarts==='undefined') return;
   if(S.chart){S.chart.dispose();}
   S.chart = echarts.init(el);
   const dates = d.rows.map(r=>r[0]);
